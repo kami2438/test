@@ -11,7 +11,7 @@ CREATE TABLE t1_shop (
     t1_tel_number integer CHECK (t1_tel_number < 99999999999),
     t1_shop_discribe TEXT,
     t1_shop_name_sub VARCHAR(30),
-    t1_create_at timestamp NOT NULL CURRENT_TIMESTAMP,
+    t1_create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     t1_update_at timestamp  CURRENT_TIMESTAMP,
     t1_mail varchar(50),
     t1_password varchar(20) NOT NULL UNIQUE,
@@ -25,7 +25,7 @@ CREATE TABLE t2_order (
     t1_shop_id varchar(10) REFERENCES t1_shop,
     t5_user_id varchar(10) REFERENCES t5_user,
     t2_comment TEXT,
-    t2_create_at timestamp NOT NULL CURRENT_TIMESTAMP,
+    t2_create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     t2_update_at timestamp CURRENT_TIMESTAMP,
     t2_week integer NOT NULL CHECK (t2_week >=0 and t2_week<=7),
     t2_order_count integer NOT NULL,
@@ -38,6 +38,44 @@ CREATE TABLE t3_order_detail (
     t3_delivery_date DATE CHECK (TO_CHAR(t3_delivery_date,'YYYY:MM:DD:HH24:MI')),
     t3_comment TEXT,
     t3_payment integer ,
-    t2_order_count integer NOT NULL,
-   
+    t3_create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    t3_update_at timestamp CURRENT_TIMESTAMP,
+    t7_delivery_man_id varchar(10) REFERENCES t7_delivery_man,
+    t3_order_deliver_status integer CHECK (t3_order_deliver_status BETWEEN 0 AND 2)
+)
+CREATE TABLE t4_food (
+    t4_food_id VARCHAR(15) PRIMARY KEY CHECK (t2_order_id ~ '^F%'),
+    t1_shop_id varchar(10) REFERENCES t1_shop,
+    t9_food_category_id varchar(5) REFERENCES t9_food_category,
+    t4_ingredients TEXT,
+    t4_price Integer ,
+    t4_food_name varchar(40),
+    t4_food_discribe TEXT ,
+    t4_create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    t4_update_at timestamp CURRENT_TIMESTAMP,
+    t4_order_count Integer
+) 
+
+CREATE TABLE t5_user (
+    t5_user_id VARCHAR(15) PRIMARY KEY CHECK (t1_shop_id ~ '^U%'),
+    t5_user_firstname varchar(20) NOT NULL,
+    t5_user_lastname varchar(20) NOT NULL,
+    t10_area_prefecture varchar(6),
+    t5_address VARCHAR(70) NOT NULL ,
+    t5_post integer not NULL,
+    t5_tel_number integer NOT NULL,
+    t5_landmark TEXT,
+    t5_allergy TEXT,
+    t5_charge_tool Integer check ( t5_charge_tool IN (0,1)),
+    t5_charge_remain Integer DEFAULT 0,
+    t5_credit_number Integer,
+    t5_credit_limit varchar(4),
+    t5_credit_security Integer,
+    t5_withdrawal integer,
+    t5_password varchar(20) NOT NULL UNIQUE,
+    t5_bank_name varchar(8) CHECK (t5_bank_name ~* '^[0-9]{4}$'),
+    t5_bank_location varchar(8) CHECK (t5_bank_location ~* '^[0-9]{3}$'),
+    t5_bank_number varchar(10)  CHECK (t5_bank_number ~* '^[0-9]{6,7}$'),
+    t5_bank_password VARCHAR(4),
+    FOREIGN KEY( t10_area_prefecture ) REFERENCES t10_area(t10_area_prefecture)
 ) 
